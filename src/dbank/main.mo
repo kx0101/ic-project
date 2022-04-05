@@ -1,5 +1,6 @@
 import Debug "mo:base/Debug";
 import Time "mo:base/Time";
+import Float "mo:base/Float";
 
 actor DBank {
   // stable means that whenever we deploy our app we want to keep the value as it was
@@ -8,15 +9,16 @@ actor DBank {
   // Starting 300 -> Adding 100 -> 400 -> Redeploy -> 300 again.
   // WITH stable : Starting 300 -> Adding 100 -> 400 -> Redeploy -> 400!
 
-  stable var currentValue = 300; // initialize 300
-  currentValue := 100; // replaces 300 with 100
+  stable var currentValue: Float = 300; // initialize 300
+  // currentValue := 300; // replaces 300 with 100
 
   // by using := no matter if the variable is stable or not, it will still update it
   // so the next time we redeploy the line 9 won't run again meaning that
   // the 300 will become 100 because of line 10 which replaces the value of currentValue
 
   let id = 123123123123; // let = data inside won't change
-  let startTime = Time.now(); // nanoseconds since 1970-1-1
+  stable var startTime = Time.now(); // nanoseconds since program started
+  // startTime := Time.now();
   Debug.print(debug_show(startTime));
 
   // Debug.print(debug_show(currentValue)); 
@@ -27,15 +29,15 @@ actor DBank {
   // that increases currentValue by 1 and prints the new value.
   // Nat = Natural Number that is positive 0...+infinity
 
-  public func topUp(amount: Nat) {
+  public func topUp(amount: Float) {
     currentValue += amount;
     Debug.print(debug_show(currentValue));
   };
 
-  public func withdraw(amount: Nat) {
-    // current value is Nat, amount is Nat, tempValue is Integer
-    // telling our program that (currentValue - amount) is an Integer number.
-    let tempValue: Int = currentValue - amount;
+  public func withdraw(amount: Float) {
+    // current value is Float, amount is Float, tempValue is Float
+    // telling our program that (currentValue - amount) is an Float number.
+    let tempValue: Float = currentValue - amount;
 
     if (tempValue >= 0){
       currentValue -= amount;
@@ -57,16 +59,26 @@ actor DBank {
   // That way we can test any function we have created inside the canister
   // just by clicking a button.
 
-  public query func checkBalance(): async Nat {
+  public query func checkBalance(): async Float {
     return currentValue; // Read-only operation
   };
 
   // if we want to make a function super fast we're using the keyword query 
-  // checkBalance(): Nat , means that it has a return value of Nat.
+  // checkBalance(): Float , means that it has a return value of Float.
   // We ALWAYS need the keyword async whenever a function has a return value.
 
+  // Compound Interest
   public func compound() {
-    let = 
+    let currentTime = Time.now();
+    let timeElapsedNS = currentTime - startTime; // from the beginning of the program time
+    // up to now (in nanoseconds)
+    let timeElapsedS = timeElapsedNS / 1000000000; // converting it to seconds
+    
+    currentValue := currentValue * (1.01 ** Float.fromInt(timeElapsedS));
+
+    // we need to reset the startTime every time we compound.
+    startTime := currentTime;
+
   }
 
 }
