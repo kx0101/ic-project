@@ -2,8 +2,7 @@ import {dbank} from "../../declarations/dbank";
 
 // async updating the current amount.
 window.addEventListener("load", async function() {
-  const currentAmount = await dbank.checkBalance();
-  document.getElementById("value").innerText = Math.round(currentAmount * 100) / 100;
+  update();
 });
 
 document.querySelector("form").addEventListener("submit", async function(e) {
@@ -18,12 +17,28 @@ document.querySelector("form").addEventListener("submit", async function(e) {
   const inputAmount = parseFloat(document.getElementById("input-amount").value);
   const outputAmount = parseFloat(document.getElementById("withdrawal-amount").value);
 
-  await dbank.topUp(inputAmount);
+  if (document.getElementById("input-amount").value.length != 0){
+    await dbank.topUp(inputAmount);
+  } 
 
-  // updating the currentAmount
-  const currentAmount = await dbank.checkBalance();
-  document.getElementById("value").innerText = Math.round(currentAmount * 100) / 100;
+  if (document.getElementById("withdrawal-amount").value.length != 0){
+    await dbank.withdraw(outputAmount);
+  }
 
+  // updating the compound interest
+  await dbank.compound();
+
+  update();
+
+  // clearing the text
+  document.getElementById("input-amount").value = "";
+  document.getElementById("withdrawal-amount").value = "";
   button.removeAttribute('disabled');
 
 });
+
+async function update() {
+  // updating the currentAmount
+  const currentAmount = await dbank.checkBalance();
+  document.getElementById("value").innerText = Math.round(currentAmount * 100) / 100;
+} 

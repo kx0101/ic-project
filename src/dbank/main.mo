@@ -10,7 +10,8 @@ actor DBank {
   // WITH stable : Starting 300 -> Adding 100 -> 400 -> Redeploy -> 400!
 
   stable var currentValue: Float = 300; // initialize 300
-  // currentValue := 300; // replaces 300 with 100
+  currentValue := 300; // replaces 300 with 100
+  Debug.print(debug_show(currentValue));
 
   // by using := no matter if the variable is stable or not, it will still update it
   // so the next time we redeploy the line 9 won't run again meaning that
@@ -18,7 +19,7 @@ actor DBank {
 
   let id = 123123123123; // let = data inside won't change
   stable var startTime = Time.now(); // nanoseconds since program started
-  // startTime := Time.now();
+  startTime := Time.now();
   Debug.print(debug_show(startTime));
 
   // Debug.print(debug_show(currentValue)); 
