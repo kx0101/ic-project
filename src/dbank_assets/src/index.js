@@ -11,7 +11,7 @@ document.querySelector("form").addEventListener("submit", async function(e) {
 
   // disabling the button so the user does not spam the button since the update function
   // takes a while to load.
-  const button = e.target.querySelector("submit-btn");
+  const button = e.target.querySelector("#submit-btn");
   button.setAttribute("disabled", true);
 
   // parseFloat because in declerations the functions should return a float value
